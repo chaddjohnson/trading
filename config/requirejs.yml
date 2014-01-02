@@ -1,0 +1,6 @@
+modules:
+  - name: 'data_access'
+
+shim:
+  class:
+    exports: 'Class'
