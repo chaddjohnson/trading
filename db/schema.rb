@@ -11,12 +11,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140103211044) do
+ActiveRecord::Schema.define(version: 20140106022327) do
 
   create_table "accounts", force: true do |t|
     t.decimal  "balance",                       precision: 10, scale: 2,                        null: false
     t.string   "account_api",                                            default: "simulation", null: false
     t.string   "account_streamer",                                       default: "generated",  null: false
+    t.date     "playback_date"
     t.string   "token",            limit: 32,                                                   null: false
     t.string   "account_data",     limit: 2048,                                                 null: false
     t.datetime "created_at",                                                                    null: false
@@ -32,6 +33,18 @@ ActiveRecord::Schema.define(version: 20140103211044) do
     t.decimal  "buy_price",             precision: 6,  scale: 2, null: false
     t.datetime "created_at",                                     null: false
     t.datetime "updated_at",                                     null: false
+  end
+
+  create_table "quotes", force: true do |t|
+    t.integer  "security_id",                                null: false
+    t.decimal  "last_price",        precision: 10, scale: 4, null: false
+    t.decimal  "bid_price",         precision: 10, scale: 4, null: false
+    t.decimal  "ask_price",         precision: 10, scale: 4, null: false
+    t.date     "date",                                       null: false
+    t.datetime "timestamp",                                  null: false
+    t.integer  "trade_volume",                               null: false
+    t.integer  "cumulative_volume",                          null: false
+    t.datetime "created_at",                                 null: false
   end
 
   create_table "securities", force: true do |t|
