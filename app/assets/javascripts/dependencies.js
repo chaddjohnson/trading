@@ -1,0 +1,1 @@
+define(['dygraph-combined', 'quote_service_client']);

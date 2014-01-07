@@ -1,5 +1,5 @@
 modules:
-  - name: 'data_access'
+  - name: 'dependencies'
 
 shim:
   class:

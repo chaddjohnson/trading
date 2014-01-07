@@ -5,7 +5,7 @@ Ext.application({
   controllers: ['Application'],
 
   launch: function() {
-    require(['data_access'], function() {
+    require(['dependencies'], function() {
       var quoteServiceClient = new (require('quote_service_client'))({
         server: 'localhost',  // TODO Make this configurable
         port: 4000

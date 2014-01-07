@@ -21,10 +21,6 @@ Ext.define('Trading.view.MdiContainer', {
     }
   },
   
-  initComponent: function() {
-    this.callParent(arguments);
-  },
-  
   initPlugins: function() {
     var plugins = [ 'WatchLists', 'AccountInfo', 'Chart', 'News', 'Trade' ];
     var view = this;
