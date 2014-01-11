@@ -36,7 +36,6 @@
       this.callParent(arguments);
 
       this.chartData = [];
-      window.chartData = this.chartData;
       this.recentPrices = [];
       this.chartRendered = false;
 
@@ -57,8 +56,19 @@
           this.getEl().select('.x-panel-body div').elements[0],
           this.chartData,
           {
+            labels: ['Time', 'Price', 'Average', 'Bid', 'Ask'],
+            visibility: [true, true, true, true],
+            legend: 'always',
             showRangeSelector: true,
-            labels: ['Time', 'Price', 'Average']
+            connectSeparatedPoints: true,
+            series: {
+              'Bid': {
+                strokeWidth: 0
+              },
+              'Ask': {
+                strokeWidth: 0
+              }
+            }
           }
         );
         this.chartRendered = true;
@@ -68,7 +78,9 @@
     updateChart: function(response) {
       this.chartData.push([new Date(response.data.timestamp),
                            response.data.last_price,
-                           this.averagePrice(response.data.last_price)]);
+                           this.averagePrice(response.data.last_price),
+                           response.data.bid_price,
+                           response.data.ask_price]);
 
       if (!this.chartRendered) {
         this.renderChart();
@@ -82,7 +94,7 @@
     averagePrice: function(lastPrice) {
       var sum;
 
-      if (this.recentPrices.length > 10) {
+      if (this.recentPrices.length > 5) {
         this.recentPrices.shift();
       }
       this.recentPrices.push(lastPrice);

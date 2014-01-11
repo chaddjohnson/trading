@@ -121,7 +121,7 @@
         text: 'Volume',
         width: 90,
         sortable: true,
-        dataIndex: 'volume',
+        dataIndex: 'cumulative_volume',
         renderer: commas,
         align: 'right'
       },{

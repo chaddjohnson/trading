@@ -49,11 +49,12 @@
 }
 
 .x-panel-body .dygraph-legend {
-  background-color: transparent !important;
+  border-radius: 3px;
   font-size: 12px !important;
   left: 63px !important;
   top: 4px !important;
-  width: 500px !important;
+  width: 600px !important;
+  padding: 5px;
 }
 
 .x-panel-body .dygraph-axis-label {

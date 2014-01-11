@@ -44,7 +44,7 @@ ActiveRecord::Schema.define(version: 20140111200426) do
     t.datetime "timestamp",                                  null: false
     t.integer  "trade_volume",                               null: false
     t.integer  "cumulative_volume",                          null: false
-    t.string   "average_volume",                             null: false
+    t.integer  "average_volume",                             null: false
     t.datetime "created_at",                                 null: false
   end
 
