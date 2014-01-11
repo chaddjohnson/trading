@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140106022327) do
+ActiveRecord::Schema.define(version: 20140111200426) do
 
   create_table "accounts", force: true do |t|
     t.decimal  "balance",                       precision: 10, scale: 2,                        null: false
@@ -44,6 +44,7 @@ ActiveRecord::Schema.define(version: 20140106022327) do
     t.datetime "timestamp",                                  null: false
     t.integer  "trade_volume",                               null: false
     t.integer  "cumulative_volume",                          null: false
+    t.string   "average_volume",                             null: false
     t.datetime "created_at",                                 null: false
   end
 

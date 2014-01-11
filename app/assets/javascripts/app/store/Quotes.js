@@ -21,10 +21,6 @@ Ext.define('Trading.store.Quotes', {
   },
   
   updateSymbols: function(response) {
-    if (this.symbols.indexOf(response.data['symbol']) == -1) {
-      return;
-    }
-    
     var record = this.findRecord('symbol', response.data['symbol']);
 
     if (record != null) {
