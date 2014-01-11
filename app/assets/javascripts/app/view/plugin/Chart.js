@@ -36,7 +36,6 @@
       this.callParent(arguments);
 
       this.chartData = [];
-      this.recentPrices = [];
       this.chartRendered = false;
 
       this.quoteServiceClient.onLoggedIn(function() {
@@ -78,7 +77,7 @@
     updateChart: function(response) {
       this.chartData.push([new Date(response.data.timestamp),
                            response.data.last_price,
-                           this.averagePrice(response.data.last_price),
+                           this.averagePrice(response.data),
                            response.data.bid_price,
                            response.data.ask_price]);
 
@@ -91,19 +90,15 @@
       }
     },
 
-    averagePrice: function(lastPrice) {
-      var sum;
-
-      if (this.recentPrices.length > 5) {
-        this.recentPrices.shift();
+    averagePrice: function(data) {
+      if (!this.average) {
+        this.average = data.last_price;
       }
-      this.recentPrices.push(lastPrice);
 
-      sum = this.recentPrices.reduce(function(previousValue, currentValue) {
-        return previousValue + currentValue;
-      });
+      multiplier = 2 / (10 + 1);
+      this.average = parseFloat(((data.last_price - this.average) * multiplier) + this.average);
 
-      return parseFloat((sum / this.recentPrices.length).toFixed(2));
+      return this.average;
     }
   });
 
