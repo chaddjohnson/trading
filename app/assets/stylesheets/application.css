@@ -47,3 +47,15 @@
 .x-action-col-icon {
   margin-right: 8px;
 }
+
+.x-panel-body .dygraph-legend {
+  background-color: transparent !important;
+  font-size: 12px !important;
+  left: 63px !important;
+  top: 4px !important;
+  width: 500px !important;
+}
+
+.x-panel-body .dygraph-axis-label {
+  font-size: 12px;
+}
