@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140111200426) do
+ActiveRecord::Schema.define(version: 20140125014637) do
 
   create_table "accounts", force: true do |t|
     t.decimal  "balance",                       precision: 10, scale: 2,                        null: false
@@ -55,5 +55,19 @@ ActiveRecord::Schema.define(version: 20140111200426) do
   end
 
   add_index "securities", ["symbol"], name: "index_securities_on_security", unique: true, using: :btree
+
+  create_table "watch_list_securities", force: true do |t|
+    t.integer  "watch_list_id", null: false
+    t.integer  "security_id",   null: false
+    t.datetime "created_at",    null: false
+  end
+
+  add_index "watch_list_securities", ["watch_list_id", "security_id"], name: "index_watch_list_securities_on_watch_list_id_and_security_id", unique: true, using: :btree
+
+  create_table "watch_lists", force: true do |t|
+    t.string   "name",       limit: 30, null: false
+    t.integer  "account_id",            null: false
+    t.datetime "created_at",            null: false
+  end
 
 end
