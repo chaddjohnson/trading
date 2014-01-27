@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140125014637) do
+ActiveRecord::Schema.define(version: 20140127034916) do
 
   create_table "accounts", force: true do |t|
     t.decimal  "balance",                       precision: 10, scale: 2,                        null: false
@@ -47,6 +47,8 @@ ActiveRecord::Schema.define(version: 20140125014637) do
     t.integer  "average_volume",                             null: false
     t.datetime "created_at",                                 null: false
   end
+
+  add_index "quotes", ["security_id", "date"], name: "index_quotes_on_security_id_and_date", using: :btree
 
   create_table "securities", force: true do |t|
     t.string "symbol",   limit: 10, null: false
