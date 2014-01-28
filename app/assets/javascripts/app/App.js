@@ -7,7 +7,7 @@ Ext.application({
   launch: function() {
     require(['dependencies'], function() {
       var quoteServiceClient = new (require('quote_service_client'))({
-        server: 'localhost',  // TODO Make this configurable
+        server: window.location.host,
         port: 4000
       });
 

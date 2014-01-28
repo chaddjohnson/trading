@@ -4,3 +4,5 @@ modules:
 shim:
   class:
     exports: 'Class'
+
+skipDirOptimize: true
