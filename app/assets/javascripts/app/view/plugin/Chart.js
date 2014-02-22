@@ -9,7 +9,7 @@
       average = previous;
     }
 
-    return (Math.round(parseFloat(((previous - average) * multiplier) + average)) * 100 / 100);
+    return ((parseFloat(((previous - average) * multiplier) + average)) * 100) / 100;
   }
 
   Ext.define('Trading.view.plugin.Chart', {
@@ -39,27 +39,33 @@
 
       this.chartData = [];
       this.chartRendered = false;
+      this.previousTimestamp = null;
+      this.currentTickValue = 0;
+      this.tickReferences = {};
 
       this.quoteServiceClient.onLoggedIn(function() {
+        // TODO Remove hardcoding of symbol.
         this.quoteServiceClient.requestChartData('FB', this.populateChart, this);
         this.quoteServiceClient.streamQuotes('FB', this.updateChart, this);
       }, this);
     },
 
     renderChart: function() {
-      if (this.chart) {
-        this.chart.destroy();
+      var self = this;
+
+      if (self.chart) {
+        self.chart.destroy();
       }
 
-      if (this.chartData.length > 0) {
+      if (self.chartData.length > 0) {
         // TODO Find a better way than recreating the chart, as the
         // visual state of the chart is lost each time this happens.
-        this.chart = new Dygraph(
-          this.getEl().select('.x-panel-body div').elements[0],
-          this.chartData,
+        self.chart = new Dygraph(
+          self.getEl().select('.x-panel-body div').elements[0],
+          self.chartData,
           {
-            labels: ['Time', 'Price', 'Average', 'Bid', 'Ask'],
-            visibility: [true, true, true, true],
+            labels: ['Time', 'Price', 'Bid', 'Ask'],
+            visibility: [true, true, true],
             legend: 'always',
             showRangeSelector: true,
             connectSeparatedPoints: true,
@@ -70,6 +76,20 @@
               'Ask': {
                 strokeWidth: 0
               }
+            },
+            xAxisLabelWidth: 100,
+            axes: {
+              x: {
+                valueFormatter: (function(tickValue) {
+                  var tickReference = self.tickReference(tickValue);
+                  return tickReference.getHours() + ':' + tickReference.getMinutes();
+                }).bind(self),
+                axisLabelFormatter: (function(tickValue) {
+                  var tickReference = self.tickReference(tickValue);
+                  return tickReference.getHours() + ':' + tickReference.getMinutes();
+                }).bind(self),
+                pixelsPerLabel: 100,
+              }
             }
           }
         );
@@ -78,28 +98,29 @@
     },
 
     populateChart: function(response) {
-      var pastChartData = [], index, quote, average;
+      var pastChartData = [], index, quote;
 
       for (index in response.data) {
         quote = response.data[index];
-        average = exponentialAverage(average, quote.last_price);
-
         pastChartData.push([
-          new Date(quote.timestamp),
+          this.tickValue(new Date(quote.timestamp)),
           quote.last_price,
-          average,
           quote.bid_price,
           quote.ask_price
         ]);
       }
 
       this.chartData = pastChartData.concat(this.chartData);
+
+      if (!this.chartRendered) {
+        this.renderChart();
+      }
     },
 
     updateChart: function(response) {
-      this.chartData.push([new Date(response.data.timestamp),
+      return;
+      this.chartData.push([this.tickValue(new Date(response.data.timestamp)),
                            response.data.last_price,
-                           this.averagePrice(response.data.last_price),
                            response.data.bid_price,
                            response.data.ask_price]);
 
@@ -108,8 +129,47 @@
       }
 
       if (this.chart) {
-        this.chart.updateOptions( { 'file': this.chartData } );
+        this.chart.updateOptions({ 'file': this.chartData });
       }
+    },
+
+    tickReference: function(tickValue) {
+      var tickReference, i;
+
+      // Determine if the tickValue is already in tickReferences, and return that if it's found.
+      if (tickReference = this.tickReferences[tickValue]) {
+        return tickReference;
+      }
+
+      // Find the available tickReference prior to the requested one.
+      for (i=tickValue; i>=0; i--) {
+        if (this.tickReferences[i]) {
+          // Return a calculated date.
+          return new Date(this.tickReferences[i].getTime() + (tickValue - i));
+        }
+      }
+    },
+
+    tickValue: function(timestamp) {
+      var i;
+
+      if (!this.previousTimestamp) {
+        // Set initial value for previousTimestamp.
+        this.previousTimestamp = timestamp;
+      }
+
+      if (this.previousTimestamp.getDate() == timestamp.getDate()) {
+        this.currentTickValue += timestamp.getTime() - this.previousTimestamp.getTime();
+      }
+      else {
+        // Set distance between days to one second.
+        this.currentTickValue += 1000;
+      }
+
+      this.tickReferences[this.currentTickValue] = timestamp;
+
+      this.previousTimestamp = timestamp;
+      return this.currentTickValue;
     },
 
     averagePrice: function(lastPrice) {
