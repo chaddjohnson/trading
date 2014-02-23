@@ -81,12 +81,10 @@
             axes: {
               x: {
                 valueFormatter: (function(tickValue) {
-                  var tickReference = self.tickReference(tickValue);
-                  return tickReference.getHours() + ':' + tickReference.getMinutes();
+                  return self.tickReference(tickValue).format('mmm ds yyyy hh:MM:ss TT', true);
                 }).bind(self),
                 axisLabelFormatter: (function(tickValue) {
-                  var tickReference = self.tickReference(tickValue);
-                  return tickReference.getHours() + ':' + tickReference.getMinutes();
+                  return self.tickReference(tickValue).format('hh:MM', true);
                 }).bind(self),
                 pixelsPerLabel: 100,
               }

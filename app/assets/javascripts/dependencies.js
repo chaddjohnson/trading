@@ -1,1 +1,1 @@
-define(['dygraph-combined', 'quote_service_client']);
+define(['dygraph-combined', 'quote_service_client', 'date_format']);
