@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140127034916) do
+ActiveRecord::Schema.define(version: 20140224063419) do
 
   create_table "accounts", force: true do |t|
     t.decimal  "balance",                       precision: 10, scale: 2,                        null: false
@@ -22,6 +22,15 @@ ActiveRecord::Schema.define(version: 20140127034916) do
     t.string   "account_data",     limit: 2048,                                                 null: false
     t.datetime "created_at",                                                                    null: false
     t.datetime "updated_at",                                                                    null: false
+  end
+
+  create_table "chart_quotes", force: true do |t|
+    t.integer  "security_id",                           null: false
+    t.decimal  "last_price",   precision: 10, scale: 4, null: false
+    t.decimal  "bid_price",    precision: 10, scale: 4, null: false
+    t.decimal  "ask_price",    precision: 10, scale: 4, null: false
+    t.integer  "trade_volume",                          null: false
+    t.datetime "created_at",                            null: false
   end
 
   create_table "positions", force: true do |t|
@@ -57,6 +66,12 @@ ActiveRecord::Schema.define(version: 20140127034916) do
   end
 
   add_index "securities", ["symbol"], name: "index_securities_on_security", unique: true, using: :btree
+
+  create_table "security_close_prices", force: true do |t|
+    t.integer "security_id",                          null: false
+    t.date    "date",                                 null: false
+    t.decimal "price",       precision: 10, scale: 4, null: false
+  end
 
   create_table "watch_list_securities", force: true do |t|
     t.integer  "watch_list_id", null: false

@@ -1,6 +1,6 @@
 DELIMITER $$
-DROP PROCEDURE IF EXISTS chart_quotes;
-CREATE PROCEDURE chart_quotes(
+DROP PROCEDURE IF EXISTS generate_chart_quotes;
+CREATE PROCEDURE generate_chart_quotes(
   param_security_id INTEGER,
   param_date DATE
 )
@@ -17,19 +17,7 @@ BEGIN
 
   DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = true;
 
-  -- Create a temp table to house the quotes.
-  DROP TEMPORARY TABLE IF EXISTS temp_quotes;
-
-  CREATE TEMPORARY TABLE temp_quotes(
-    id INTEGER NOT NULL AUTO_INCREMENT,
-    security_id INTEGER NOT NULL,
-    last_price DECIMAL(10,4) NOT NULL,
-    bid_price DECIMAL(10,4) NOT NULL,
-    ask_price DECIMAL(10,4) NOT NULL,
-    created_at DATETIME NOT NULL,
-    trade_volume INTEGER NOT NULL,
-    PRIMARY KEY (id)
-  ) ENGINE=Memory;
+  DELETE FROM chart_quotes WHERE security_id = param_security_id;
 
   OPEN quote_dates_cursor;
   REPEAT
@@ -44,23 +32,19 @@ BEGIN
 
         -- Determine the interval at which to retrieve quotes based on the date index.
         SELECT CASE
-          WHEN date_index = 1             THEN 1
-          WHEN date_index = 2             THEN FLOOR(quote_count / 1500)
+          WHEN date_index BETWEEN 1 AND 2 THEN FLOOR(quote_count / 1500)
           WHEN date_index BETWEEN 3 AND 5 THEN FLOOR(quote_count / 100)
           WHEN date_index > 5             THEN FLOOR(quote_count / 15)
         END
         INTO current_interval;
 
         -- Add quotes to the temp table.
-        CALL chart_quotes_at_intervals(param_security_id, quote_date, current_interval);
+        CALL generate_chart_quotes_at_intervals(param_security_id, quote_date, current_interval);
       END IF;
 
     END IF;
   UNTIL done END REPEAT;
   CLOSE quote_dates_cursor;
-
-  -- Return results of the temporary table.
-  SELECT * FROM temp_quotes ORDER BY created_at;
 
 END$$
 

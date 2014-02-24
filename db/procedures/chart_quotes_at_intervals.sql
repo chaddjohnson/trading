@@ -1,6 +1,6 @@
 DELIMITER $$
-DROP PROCEDURE IF EXISTS chart_quotes_at_intervals;
-CREATE PROCEDURE chart_quotes_at_intervals(
+DROP PROCEDURE IF EXISTS generate_chart_quotes_at_intervals;
+CREATE PROCEDURE generate_chart_quotes_at_intervals(
   param_security_id INTEGER,
   param_date DATE,
   param_interval INTEGER
@@ -9,10 +9,10 @@ BEGIN
 
   SET @i = 0;
 
-  INSERT INTO temp_quotes
-      (id, security_id, last_price, bid_price, ask_price, created_at, trade_volume)
+  INSERT INTO chart_quotes
+      (security_id, last_price, bid_price, ask_price, created_at, trade_volume)
     SELECT
-      id, security_id, last_price, bid_price, ask_price, created_at, trade_volume
+      security_id, last_price, bid_price, ask_price, created_at, trade_volume
     FROM
       (SELECT
          @i := @i + 1 AS i,
